@@ -1,4 +1,5 @@
-#returns start and end time as list of tuples
+#returns start and end time as [start_hour, start_min, end_hour, end_min]
+#ex: [8, 0, 9, 15] = class occurs from 8:00 AM to 9:15 AM
 def parseTimes(str):
 	times = str.split(' - ')
 	ret = []
@@ -8,33 +9,36 @@ def parseTimes(str):
 			hour = 0
 		minute = int(time[-4:-2])
 		if (time[-2:] == 'pm'):
-			ret.append([hour+12,minute])
+			ret += [hour+12,minute]
 		else:
-			ret.append([hour,minute])
+			ret += [hour,minute]
 	return ret
 
-#returns list with days as integers and start and end times as integers
+#returns list with days as nested list and times as last 4 indexes, which are returned by parseTimes
+#ex: [["Tuesday", "Thursday"], 8, 0, 9, 15] = class occurs Tuesdays and Thursdays from 8:00 AM to 9:15 AM
 def parseDay(str):
 	index = 0
 	ret = [[]]
 	while (str[index] != ' '):
 		abr_day = str[index:index+2]
 		if (abr_day == 'Mo'):
-			ret[0].append(0)
+			ret[0].append("Monday")
 		elif (abr_day == 'Tu'):
-			ret[0].append(1)
+			ret[0].append("Tuesday")
 		elif (abr_day == 'We'):
-			ret[0].append(2)
+			ret[0].append("Wednesday")
 		elif (abr_day == 'Th'):
-			ret[0].append(3)
+			ret[0].append("Thursday")
 		elif (abr_day == 'Fr'):
-			ret[0].append(4)
+			ret[0].append("Friday")
 		elif (abr_day == 'Sa'):
-			ret[0].append(5)
+			ret[0].append("Saturday")
 		index+=2
-	ret += (parseTimes(str[index+1:]))
+	ret += parseTimes(str[index+1:])
 	return ret
 
+#Returns list of lists returned by parseDay or None if day is invalid
+#Should be same length as list returned by parseRooms and something has gone wrong if not
 def parseDays(str):
 	ret = []
 	for day in str.split(', '):
@@ -44,31 +48,19 @@ def parseDays(str):
 			ret.append(parseDay(day))
 	return ret
 
-def parseDate(str):
-	dates = str.split(' - ')
-	ret = []
-	for date in dates:
-		month = int(date[0:2])
-		day = int(date[3:5])
-		year = int(date[6:])
-		ret.append([month, day, year])
-	return ret
-
-def parseDates(str):
-	ret = []
-	for date in str.split(', '):
-		ret.append(parseDate(date))
-	return ret
-
+#Returns a list of lists returned by parseBuilding or None if room is invalid
 def parseRooms(str):
 	ret = []
 	for room in str.split(', '):
 		if (room == 'TO BE ARRANGED' or room == 'WEB Based Class' or room == 'TBA' or room == 'OFF CAMPUS TO BE ARRANGED'):
 			ret.append(None)
 		else:
-			ret.append(room)
+			ret.append(parseBuilding(room))
 	return ret
 
+#Returns a list with the name of the building as the first index and the room number as the second
+#Returns a list with an empty second index if it cannot parse
+#Am considering returning None for some places that don't belong like Swarts Hall and the Baierl
 def parseBuilding(room):
 	if (room[-21:] == ' Wesley W Posvar Hall'):
 		return ['Posvar Hall', room[:-21]]
@@ -162,4 +154,73 @@ def parseBuilding(room):
 		return ['Thaw Hall', '207']
 	else:
 		return [room,'']
-		
+
+def getBuildingHours(building, weekday):
+	if building == 'Information Sciences Building' or building == 'Sennott Square':
+		if weekday <= 3:
+			return [datetime.time(7), datetime.time(22)]
+		elif weekday == 4:
+			return [datetime.time(7), datetime.time(18)]
+		elif weekday == 5:
+			return [datetime.time(8,30), datetime.time(18)]
+		else:
+			return None
+	elif building == 'Music Building':
+		if weekday <= 3:
+			return [datetime.time(8,30), datetime.time(20,45)]
+		elif weekday == 4:
+			return [datetime.time(8,30), datetime.time(17)]
+		else:
+			return None
+	elif building == 'Cathedral of Learning':
+		if weekday <= 4:
+			return [datetime.time(7), datetime.time(23)]
+		else:
+			return [datetime.time(7,30), datetime.time(23)]
+	elif building == 'Benedum Hall':
+		if weekday <= 4:
+			return [datetime.time(7,30), datetime.time(22)]
+		else:
+			return [datetime.time(8), datetime.time(22)]
+	elif building == 'Lawrence Hall':
+		if weekday <= 4:
+			return [datetime.time(7,30), datetime.time(22)]
+		else:
+			return [datetime.time(8), datetime.time(20)]
+	elif building == 'Frick Fine Arts Builing':
+		if weekday <= 4:
+			return [datetime.time(7,30), datetime.time(22)]
+		else:
+			return [datetime.time(10), datetime.time(18)]
+	elif building == 'Posvar Hall':
+		if weekday <= 4:
+			return [datetime.time(7,30), datetime.time(22)]
+		else:
+			return [datetime.time(8), datetime.time(20)]
+	else:
+		if weekday <= 4:
+			return [datetime.time(7,30), datetime.time(22)]
+		else:
+			return None
+
+def timeToString(hour, minute):
+	if hour >= 12:
+		period = "PM"
+		hour -= 12
+	else:
+		period = "AM"
+	if hour == 0:
+		hour = 12
+	if minute < 10:
+		return str(hour) + ":0" + str(minute) + " " + period
+	else:
+		return str(hour) + ":" + str(minute) + " " + period
+
+def timesToString(arr):
+	return timeToString(arr[0], arr[1]) + " - " + timeToString(arr[2], arr[3])
+
+def timeReplace(arr, i1, i2, time):
+	for i in range(i1 + 1, i2):
+		arr.pop(i)
+	arr[i1] = time
+	
