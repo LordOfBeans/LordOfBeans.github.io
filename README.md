@@ -1,5 +1,5 @@
 This is the home of the Pitt Open Classrooms Bot.
-As a student at the University of Pittsburgh, I am a bit dissatisfied at the lack of good study spaces during the middle of the day, even if I just need an hour to study.
+As a student at the University of Pittsburgh, I am a bit dissatisfied at the lack of good study spaces during the middle of the day.
 It appears that the University's official study spaces list is handwritten and some of the allocated blocks of time don't make much practical sense.
 In response, I have built a bot that grabs all occuring classes from the PSMobile class search system and finds times when classrooms are actually open, or at the very least not occupied by a class.
 
