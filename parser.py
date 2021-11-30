@@ -52,15 +52,13 @@ def parseDays(str):
 def parseRooms(str):
 	ret = []
 	for room in str.split(', '):
-		if (room == 'TO BE ARRANGED' or room == 'WEB Based Class' or room == 'TBA' or room == 'OFF CAMPUS TO BE ARRANGED'):
-			ret.append(None)
-		else:
-			ret.append(parseBuilding(room))
+		roomArr = parseBuilding(room)
+		ret.append(roomArr)
 	return ret
 
 #Returns a list with the name of the building as the first index and the room number as the second
 #Returns a list with an empty second index if it cannot parse
-#Am considering returning None for some places that don't belong like Swarts Hall and the Baierl
+#Returns None for quite a few places, which effectively ignores them, because I don't know th buildings well and they only have a few open rooms
 def parseBuilding(room):
 	if (room[-21:] == ' Wesley W Posvar Hall'):
 		return ['Posvar Hall', room[:-21]]
@@ -101,59 +99,59 @@ def parseBuilding(room):
 	elif (room[-12:] == ' Alumni Hall'):
 		return ['Alumni Hall', room[:-12]]
 	elif (room[-11:] == ' Trees Hall'):
-		return ['Trees Hall', room[:-11]]
+		return None
 	elif (room[-15:] == ' Music Building'):
 		return ['Music Building', room[:-15]]
 	elif (room[-16:] == ' Bellefield Hall'):
-		return ['Bellefield Hall', room[:-16]]
+		return None
 	elif (room[-13:] == ' Forbes Tower'):
 		return ['Forbes Tower', room[:-13]]
 	elif (room[-12:] == ' Mervis Hall'):
 		return ['Mervis Hall', room[:-12]]
 	elif (room[-18:] == ' Parkvale Building'):
-		return ['Parkvale Building', room[:-18]]
+		return None
 	elif (room[-27:] == ' Gardner Steel Conf  Center'):
-		return ['Gardner Steel Conference Center', room[:-27]]
+		return None
 	elif (room[-19:] == ' Barco Law Building'):
 		return ['Barco Law Building', room[:-19]]
 	elif (room[-19:] == ' William Pitt Union'):
-		return ['William Pitt Union', room[:-19]]
+		return None
 	elif (room[-20:] == ' The Offices at Baum'):
-		return ['The Offices at Buam', room[:-20]]
+		return None
 	elif (room[-11:] == ' Clapp Hall'):
 		return ['Clapp Hall', room[:-11]]
 	elif (room[-11:] == ' Bruce hall'):
-		return ['Bruce Hall', room[:-11]]
+		return None
 	elif (room[-10:] == ' Salk Hall'):
 		return ['Salk Hall', room[:-10]]
 	elif (room[-5:] == ' BST3'):
-		return ['Biomedial Science Tower 3', room[:-5]]
+		return None
 	elif (room[-17:] == ' Murdoch Building'):
-		return ['Murdoch Building', room[:-17]]
+		return None
 	elif (room[-19:] == ' 3343 Forbes Avenue'):
-		return ['3343 Forbes Avenue', room[:-19]]
+		return None
 	elif (room[-22:] == ' O\'Hara Student Center'):
-		return ['O\'Hara Student Center', room[:-22]]
+		return None
 	elif (room[-27:] == ' Space Res Coordination Cen'):
-		return ['Space Research Coordination Center', room[:-27]]
+		return None
 	elif (room[-25:] == ' Biomedical Science Tower'):
-		return ['Bomedical Science Tower', room[:-25]]
+		return None
 	elif (room[-17:] == ' Mellon Institute'):
-		return ['Mellon Institute', room[:-17]]
+		return None
 	elif (room[-12:] == ' Swarts Hall'):
-		return ['Swarts Hall', room[:-12]]
+		return None
 	elif (room[-26:] == ' Sports and Fitness Center'):
-		return ['Sports and Fitness Center', room[:-26]]
+		return None
 	elif (room[-11:] == ' Salk Annex'):
-		return ['Salk Annex', room[:-11]]
+		return None
 	elif (room[-12:] == ' Scaife Hall'):
-		return ['Scaife Hall', room[:-12]]
+		return None
 	elif (room[-20:] == ' Bridgeside Point II'):
-		return ['Bridgeside Point II', room[:-20]]
+		return None
 	elif (room == 'THAW 00207'):
 		return ['Thaw Hall', '207']
 	else:
-		return [room,'']
+		return None
 
 #This could probably be written better at this point
 def getBuildingHours(building, weekday):
