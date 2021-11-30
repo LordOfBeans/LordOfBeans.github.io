@@ -155,51 +155,52 @@ def parseBuilding(room):
 	else:
 		return [room,'']
 
+#This could probably be written better at this point
 def getBuildingHours(building, weekday):
 	if building == 'Information Sciences Building' or building == 'Sennott Square':
-		if weekday <= 3:
-			return [datetime.time(7), datetime.time(22)]
-		elif weekday == 4:
-			return [datetime.time(7), datetime.time(18)]
-		elif weekday == 5:
-			return [datetime.time(8,30), datetime.time(18)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday":
+			return [7, 0, 22, 0]
+		elif weekday == "Friday":
+			return [7, 0, 18, 0]
+		elif weekday == "Saturday":
+			return [8, 30, 18, 0]
 		else:
 			return None
 	elif building == 'Music Building':
-		if weekday <= 3:
-			return [datetime.time(8,30), datetime.time(20,45)]
-		elif weekday == 4:
-			return [datetime.time(8,30), datetime.time(17)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday":
+			return [8, 30, 20, 45]
+		elif weekday == "Friday":
+			return [8, 30, 17, 0]
 		else:
 			return None
 	elif building == 'Cathedral of Learning':
-		if weekday <= 4:
-			return [datetime.time(7), datetime.time(23)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 0, 23, 0]
 		else:
-			return [datetime.time(7,30), datetime.time(23)]
+			return [7, 30, 23, 0]
 	elif building == 'Benedum Hall':
-		if weekday <= 4:
-			return [datetime.time(7,30), datetime.time(22)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 30, 22, 0]
 		else:
-			return [datetime.time(8), datetime.time(22)]
+			return [8, 0, 22, 0]
 	elif building == 'Lawrence Hall':
-		if weekday <= 4:
-			return [datetime.time(7,30), datetime.time(22)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 30, 22, 0]
 		else:
-			return [datetime.time(8), datetime.time(20)]
+			return [8, 0, 20, 0]
 	elif building == 'Frick Fine Arts Builing':
-		if weekday <= 4:
-			return [datetime.time(7,30), datetime.time(22)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 30, 22, 0]
 		else:
-			return [datetime.time(10), datetime.time(18)]
+			return [10, 0, 18, 0]
 	elif building == 'Posvar Hall':
-		if weekday <= 4:
-			return [datetime.time(7,30), datetime.time(22)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 30, 22, 0]
 		else:
-			return [datetime.time(8), datetime.time(20)]
+			return [8, 0, 20, 0]
 	else:
-		if weekday <= 4:
-			return [datetime.time(7,30), datetime.time(22)]
+		if weekday == "Monday" or weekday == "Tuesday" or weekday == "Wednesday" or weekday == "Thursday" or weekday == "Friday":
+			return [7, 30, 22, 0]
 		else:
 			return None
 

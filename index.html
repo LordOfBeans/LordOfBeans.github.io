@@ -1,11 +1,76 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Pitt Classroom Openings</title>
+		<style>
+
+* {
+	margin:0;
+	padding:0;
+}
+
+.item {
+	border: 2px solid black;
+	margin:5px;
+	background-color: #003594;
+	display: block;
+}
+
+.weekday {
+	font-size: 26px;
+}
+
+.building {
+	font-size: 20px;
+	margin-left: 15px;
+}
+
+.rooms {
+	font-size: 14px;
+	background-color:#ffffff;
+}
+
+.container {
+	border-top: 2px solid black;
+	display: none;
+}
+
+.name {
+	padding:5px;
+	margin:0;
+	background-color:#ffb81c;
+}
+		</style>
 	</head>
-	<body>
-		<div id="datetimeInput">
-			
+	<body onload="placeContent()">
+		<div id="all">
 		</div>
+		<script>
+document.addEventListener("click", function(event) {
+	expand(event.target);
+});
+
+function expand(target) {
+	if (target.classList.contains("name")) {
+		next = target.nextElementSibling;
+		console.log(target.className)
+		console.log(next.className)
+		console.log(next.style.display)
+		if (next.style.display === "block") {
+			next.style.display = "none";
+		} else {
+			next.style.display = "block";
+		}
+	}
+}
+
+async function placeContent(){
+	let myHTML = await fetch("open.html");
+	let text = await myHTML.text();
+	document.getElementById("all").innerHTML = text
+}
+	
+		</script>
 	</body>
 </html>

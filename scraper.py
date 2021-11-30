@@ -20,39 +20,14 @@ def getSubjectSoup(token, acad_career, subject):
 		soup = BeautifulSoup(response.read(), 'html.parser')
 	return soup
 
-#Returns a list of lists returned by getClassInfo for each class at Pitt
-def getClasses():
-	token = getToken()
-	classes = []
-	headers["Cookie"] = "CSRFCookie="+token
-	with open("subjects.json") as jsubs:
-		subjects = json.load(jsubs)
-	for subject in subjects:
-		print("Getting all classes in " + subject['subject'])
-		for campus in subject['campuses'].values():
-			if (campus['campus'] == 'PIT'):
-				for career in subject['careers'].values():
-					soup = getSubjectSoup(token, career['career'], subject['subject'])
-					cls = getClassInfo(soup)
-					classes.append(cls)
-	return classes
-
-#Returns a list of lists with info about all classes found in subject soup
-def getClassInfo(soup):
-	ret = []
-	classes = soup.find_all('div',{'class':'section-content'})
-	for cls in classes:
-		div = cls.find('div',{'class':'section-body'}).next_sibling.next_sibling.next_sibling.next_sibling
-		days = parser.parseDays(div.string[12:])
-		div = div.next_sibling.next_sibling
-		rooms = parser.parseRooms(div.string[6:])
-		ret.append([days, dates, rooms])
-	return ret
-
 def minTime(hour, min):
 	return hour * 60 + min
 
-#Please forgive me for this abomination of ifs, elses, and loops
+#My apologies for this abomination of code. No method this simple in concept should be this long, but it works so I'm running with it.
+#Returns a dictionary with the format {Weekday:{Building:{Room:[Times]}}}
+#Times in the innermost list are 4-length list with format [start_hour, start_minute, end_hour, end_minute]
+#This is not a complete dictionary of all classes and times at Pitt. It is specifically configured for finding openings in classrooms. Overlapping classes are put together. Classes that contradict posted building hours are trimmed. No information on subject, professor, class number, class size, specific dates, etc. are stored.
+#This project in general also has a very specific purpose. The code here would require a lot of adaptation to be used for purposes other than finding openings.
 def buildClassDict():
 	token = getToken()
 	classDict = {}
@@ -77,9 +52,35 @@ def buildClassDict():
 							if room != None and day != None:
 								for j in range(0, len(day[0])):
 									weekday = day[0][j]
+									hours = parser.getBuildingHours(room[0], weekday)
 									times = day[1:]
 									building = room[0]
 									roomNum = room[1]
+									if hours == None:
+										print(parser.timesToString(times) + " class in " + roomNum + " " + building + " despite closure on " + weekday)
+										continue
+									else:
+										building_open = minTime(hours[0], hours[1])
+										building_close = minTime(hours[2], hours[3])
+										class_start = minTime(times[0], times[1])
+										class_end = minTime(times[2], times[3])
+									if building_open > class_start:
+										print(parser.timesToString(times) + " class in " + roomNum + " " + building + " despite opening at " + parser.timeToString(hours[0], hours[1]) + " on " + weekday)
+										times[0] = hours[0]
+										times[1] = hours[1]
+										print("\tChanged times to " + parser.timesToString(times))
+									if building_close < class_end:
+										print(parser.timesToString(times) + " class in " + roomNum + " " + building + " despite closing at " + parser.timeToString(hours[2], hours[3]) + " on " + weekday)
+										times[2] = hours[2]
+										times[3] = hours[3]
+										print("\tChanged times to " + parser.timesToString(times))
+									classTime = minTime(times[2], times[3]) - minTime(times[0], times[1])
+									if classTime <= 0:
+										print(str(classTime) + "-minute class on " + weekday + " in " + roomNum + " " + building + " at " + parser.timesToString(times))
+										print("\tClass will not be included in classDict in any capacity")
+										continue
+									elif classTime < 50 or classTime > 300:
+										print(str(classTime) + "-minute class on " + weekday + " in " + roomNum + " " + building + " at " + parser.timesToString(times))
 									if weekday in classDict.keys():
 										if building in classDict[weekday].keys():
 											if roomNum in classDict[weekday][building].keys():
@@ -121,14 +122,3 @@ def buildClassDict():
 									else:
 										classDict[weekday] = {building:{roomNum:[times]}}
 	return classDict
-
-	
-
-def testClasses():
-	token = getToken()
-	classes = []
-	headers["Cookie"] = "CSRFCookie="+token
-	soup = getSubjectSoup(token, 'UGRD', 'PHYS')
-	cls = getClassInfo(soup)
-	classes.append(cls)
-	return classes
